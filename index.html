@@ -14,7 +14,12 @@
     <div class="loader">
         Wait... locating position.
     </div>
-
+    <!--Add new city-->
+    <form action="" class="search">
+        <input type="text" data-input="cityAdd" class="search__text" placeholder="Add new city">
+        <input type="submit" data-button="add" class="search-btn btn" value="Add new city">
+    </form>
+    <!-- Template for the weather-->
     <main class="card-group">
         <template id="template--city">
             <div class="card">
@@ -23,7 +28,7 @@
                     <h4 data-time class="card__time"></h4>
                 </header>
                 <div class="card__info">
-                    <img data-icon src=""alt="" class="card__image">
+                    <img data-icon src="" alt="Image of weather" class="card__image">
                     <span data-temp="max" class="card__maxt"></span>
                     <span data-temp="min" class="card__mint"></span>
                     <span data-temp="current" class="card__temp"></span>
