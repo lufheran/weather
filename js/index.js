@@ -5,12 +5,14 @@
     //Variables of the different API
     var API_WORLDTIME_KEY = "d6a4075ceb419113c64885d9086d5";
     var API_WORLDTIME = "https://api.worldweatheronline.com/free/v2/tz.ashx?format=json&key=" + API_WORLDTIME_KEY + "&q=";
+
     var API_WEATHER_KEY = "80114c7878f599621184a687fc500a12";
     var API_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=" + API_WEATHER_KEY + "&";
     var IMG_WEATHER = "http://openweathermap.org/img/w/";
 
     var today = new Date();
     var timeNow = today.toLocaleTimeString();
+    var timeToShow;
 
     var $body = $("body");
     var $loader = $(".loader");
@@ -27,6 +29,11 @@
 
     //Function of button Add
     $($buttonAdd).on("click",addNewCity);
+    $($nameNewCity).on("keypress",function(){
+        if(event.which ==13){
+            addNewCity();
+        }
+    });
 
 
     //Show the different errors
@@ -81,9 +88,15 @@
         var t = document.querySelector(id);
         return document.importNode(t.content, true);
     }
-    function renderTemplate(cityWeather){
+    function renderTemplate(cityWeather,localTime){
         var clone = activateTemplate("#template--city");
-        clone.querySelector("[data-time]").innerHTML= timeNow;
+
+        if(localTime){
+            timeToShow = localTime.split(" ")[1];
+        }else{
+            timeToShow = timeNow;
+        }
+        clone.querySelector("[data-time]").innerHTML= timeToShow;
         clone.querySelector("[data-city]").innerHTML = cityWeather.zone;
         clone.querySelector("[data-icon]").src = cityWeather.icon;
         clone.querySelector("[data-temp='max']").innerHTML = cityWeather.temp_max.toFixed(1);
@@ -101,14 +114,16 @@
     }
 
     function getWeatherNewCity(data){
-        cityWeather = {};
-        cityWeather.zone = data.name;
-        cityWeather.icon = IMG_WEATHER+ data.weather[0].icon+".png";
-        cityWeather.temp = data.main.temp - 273.15;
-        cityWeather.temp_max = data.main.temp_max - 273.15;
-        cityWeather.temp_min = data.main.temp_min -273.15;
-        cityWeather.main = data.weather[0].main;
+        $.getJSON(API_WORLDTIME+data.name,function(dataTime) {
+            cityWeather = {};
+            cityWeather.zone = data.name;
+            cityWeather.icon = IMG_WEATHER + data.weather[0].icon + ".png";
+            cityWeather.temp = data.main.temp - 273.15;
+            cityWeather.temp_max = data.main.temp_max - 273.15;
+            cityWeather.temp_min = data.main.temp_min - 273.15;
+            cityWeather.main = data.weather[0].main;
 
-        renderTemplate(cityWeather);
+            renderTemplate(cityWeather,dataTime.data.time_zone[0].localtime);
+        });
     }
 })();
