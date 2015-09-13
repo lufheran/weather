@@ -17,8 +17,11 @@
     var $body = $("body");
     var $loader = $(".loader");
     var $buttonAdd = $("[data-button='add']");
-    var $nameNewCity = $("[data-input='cityAdd']")
+    var $nameNewCity = $("[data-input='cityAdd']");
+    var $buttonLoad = $("[data-saved-cities]");
+
     //Cities
+    var cities = [];
     var cityWeather={};
     cityWeather.zone;
     cityWeather.icon;
@@ -27,13 +30,16 @@
     cityWeather.temp_min;
     cityWeather.main;
 
-    //Function of button Add
+    //Events
     $($buttonAdd).on("click",addNewCity);
+
     $($nameNewCity).on("keypress",function(){
         if(event.which ==13){
             addNewCity();
         }
     });
+
+    $($buttonLoad).on("click",loadSavedCities);
 
 
     //Show the different errors
@@ -124,6 +130,21 @@
             cityWeather.main = data.weather[0].main;
 
             renderTemplate(cityWeather,dataTime.data.time_zone[0].localtime);
+
+            cities.push(cityWeather);
+            localStorage.setItem('cities',JSON.stringify(cities));
         });
+    }
+
+    function loadSavedCities(event){
+        event.preventDefault();
+
+        function renderCities(cities){
+            cities.forEach(function(city){
+                renderTemplate(city);
+            });
+        }
+        var cities = JSON.parse(localStorage.getItem("cities"));
+        renderCities(cities);
     }
 })();
